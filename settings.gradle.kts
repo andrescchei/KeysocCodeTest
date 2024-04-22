@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "KeysocCodeTest"
 include(":app")
- 
+include(":data")
+include(":domain")
