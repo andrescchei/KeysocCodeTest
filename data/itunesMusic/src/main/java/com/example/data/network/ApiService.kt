@@ -7,5 +7,5 @@ import retrofit2.http.Path
 
 interface ApiService {
     @GET("search")
-    suspend fun searchSongsBy(@Path("term") keyword: String, @Path("limit") limit: Int, @Path("media") media: String = "music"): Response<List<ItunesMusic>>
+    suspend fun searchSongsBy(@Path("term") term: String = "Taylor Swift", @Path("limit") limit: Int, @Path("media") media: String = "music"): Response<List<ItunesMusic>>
 }

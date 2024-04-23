@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "KeysocCodeTest"
 include(":app")
-include(":data")
+include(":data:itunesMusic")
 include(":domain")
 include(":feature")
-include(":mylibrary")
+include(":feature:songList")

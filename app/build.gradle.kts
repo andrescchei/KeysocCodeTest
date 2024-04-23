@@ -61,7 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     api(libs.koin.android)
     implementation(project(":domain"))
-    implementation(project(":data"))
+    implementation(project(":data:itunesMusic"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

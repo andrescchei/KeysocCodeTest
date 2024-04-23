@@ -9,11 +9,10 @@ import java.net.URL
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository): IGetSongsUsecase {
-    override suspend fun execute(
-        keyword: String,
+    override suspend fun invoke(
         limit: Int
     ): Result<List<Song>, SearchSongsError> = try {
-        val response = repo.getItunesMusicList(keyword, limit)
+        val response = repo.getItunesMusicList(limit)
         val list = response.body() ?: listOf()
         Result.Success(
             list.map { music ->

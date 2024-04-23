@@ -12,6 +12,7 @@ appcompat = "1.6.1"
 material = "1.10.0"
 retrofit = "2.9.0"
 koin-android-version = "3.5.0"
+collectionsImmutableVersion = "0.3.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,7 +34,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android-version" }
-
+kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "collectionsImmutableVersion" }
 [plugins]
 androidLibrary =  { id = "com.android.library", version.ref = "agp" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }

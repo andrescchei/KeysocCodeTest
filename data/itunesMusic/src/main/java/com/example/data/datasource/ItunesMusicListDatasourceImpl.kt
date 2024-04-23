@@ -7,7 +7,7 @@ import retrofit2.Response
 internal class ItunesMusicListDatasourceImpl(
     private val apiService: ApiService
 ): IItunesMusicListDatasource {
-    override suspend fun getItunesMusicList(keyword: String, limit: Int): Response<List<ItunesMusic>> {
-        return apiService.searchSongsBy(keyword, limit)
+    override suspend fun getItunesMusicList(limit: Int): Response<List<ItunesMusic>> {
+        return apiService.searchSongsBy(limit = limit)
     }
 }
