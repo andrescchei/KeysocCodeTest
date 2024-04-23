@@ -59,9 +59,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    api(libs.koin.android)
+//    api(libs.koin.android)
     implementation(project(":domain"))
     implementation(project(":data:itunesMusic"))
+    implementation(project(":feature:songList"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

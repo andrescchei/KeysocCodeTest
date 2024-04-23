@@ -13,14 +13,13 @@ internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository)
         limit: Int
     ): Result<List<Song>, SearchSongsError> = try {
         val response = repo.getItunesMusicList(limit)
-        val list = response.body() ?: listOf()
+        val list = response.body()?.results ?: listOf()
         Result.Success(
             list.map { music ->
-                val url = music.artworkUrl100?.let { URL(it) }
                 Song(
                     music.trackName,
                     music.collectionName,
-                    url
+                    music.artworkUrl100
                 )
             }
         )
