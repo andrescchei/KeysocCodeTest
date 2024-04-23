@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.androidApplication)
+    id(libs.plugins.androidLibrary.get().pluginId)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
 
@@ -8,11 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.domain"
         minSdk = 29
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

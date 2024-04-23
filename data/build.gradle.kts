@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.androidApplication)
+    id(libs.plugins.androidLibrary.get().pluginId)
     alias(libs.plugins.jetbrainsKotlinAndroid)
 }
 
@@ -8,11 +8,8 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.data"
+
         minSdk = 29
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,7 +37,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.retrofit)
+    api(libs.retrofit)
     implementation(libs.gson)
     api(libs.koin.android)
     testImplementation(libs.junit)

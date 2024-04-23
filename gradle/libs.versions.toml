@@ -35,6 +35,7 @@ gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin-android-version" }
 
 [plugins]
+androidLibrary =  { id = "com.android.library", version.ref = "agp" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 

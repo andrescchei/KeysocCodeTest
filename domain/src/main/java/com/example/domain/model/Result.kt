@@ -1,4 +1,4 @@
-package com.example.data.model
+package com.example.domain.model
 
 typealias BaseError = Error
 sealed interface Result<R, E: BaseError> {

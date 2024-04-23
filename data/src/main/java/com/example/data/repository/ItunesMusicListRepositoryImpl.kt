@@ -2,7 +2,6 @@ package com.example.data.repository
 
 import com.example.data.datasource.IItunesMusicListDatasource
 import com.example.data.model.ItunesMusic
-import com.example.data.model.Result
 import retrofit2.Response
 
 internal class ItunesMusicListRepositoryImpl(private val datasource: IItunesMusicListDatasource): IItunesMusicListRepository {
