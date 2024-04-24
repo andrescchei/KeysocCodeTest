@@ -11,7 +11,8 @@ data class SongListState (
     val songList: ImmutableList<Song> = persistentListOf(),
     val isLastPage: Boolean = false,
     val sortingColumn: SongSortingColumn = SongSortingColumn.SONG_NAME,
-    val toastMessage: String? = null
+    val toastMessage: String? = null,
+    val limit: Int = 100
 )
 
 sealed interface SongListEvent {
