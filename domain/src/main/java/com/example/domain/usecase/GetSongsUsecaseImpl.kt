@@ -17,6 +17,7 @@ internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository)
         Result.Success(
             list.map { music ->
                 Song(
+                    music.trackId,
                     music.trackName,
                     music.collectionName,
                     music.artworkUrl100

@@ -36,8 +36,7 @@ class SongListViewModel(
             limitFlow.collectLatest {
                 when(val result = getSongListUsecase.invoke(it)) {
                     is Result.Success -> originalListFlow.update { result.response }
-                    is Result.Error -> { println("DLLM ${result.error}")
-                    }//TODO Toast
+                    is Result.Error -> { println("${result.error}") }//TODO Toast
                 }
             }
         }
