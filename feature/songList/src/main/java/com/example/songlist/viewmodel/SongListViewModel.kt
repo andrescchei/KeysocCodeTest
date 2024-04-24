@@ -40,12 +40,12 @@ class SongListViewModel(
     private val sortSongsUsecase: ISortSongsUsecase
 ): ViewModel() {
 
-    private val limitFlow = MutableStateFlow(100)
-    private val sortingFlow = MutableStateFlow(SongSortingColumn.SONG_NAME)
-    private val searchFlow = MutableStateFlow("")
-
     private val _uiState = MutableStateFlow(SongListState())
     val uiState: StateFlow<SongListState> = _uiState
+
+    private val limitFlow = MutableStateFlow(_uiState.value.limit)
+    private val sortingFlow = MutableStateFlow(_uiState.value.sortingColumn)
+    private val searchFlow = MutableStateFlow(_uiState.value.searchKeyword)
 
     private val maxSize = 200
     private val pageSize = 100
