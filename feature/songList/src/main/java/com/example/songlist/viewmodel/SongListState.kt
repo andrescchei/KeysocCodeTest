@@ -10,7 +10,8 @@ data class SongListState (
     val searchKeyword: String =  "",
     val songList: ImmutableList<Song> = persistentListOf(),
     val isLastPage: Boolean = false,
-    val sortingColumn: SongSortingColumn = SongSortingColumn.SONG_NAME
+    val sortingColumn: SongSortingColumn = SongSortingColumn.SONG_NAME,
+    val toastMessage: String? = null
 )
 
 sealed interface SongListEvent {
@@ -23,4 +24,6 @@ sealed interface SongListEvent {
     ): SongListEvent
 
     data object OnLoadMore: SongListEvent
+
+    data object OnToasted: SongListEvent
 }

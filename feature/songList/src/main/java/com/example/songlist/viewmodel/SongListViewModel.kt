@@ -3,6 +3,7 @@ package com.example.songlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Result
+import com.example.domain.model.SearchSongsError
 import com.example.domain.model.Song
 import com.example.domain.model.SongSortingColumn
 import com.example.domain.usecase.IFilterSongsUsecase
@@ -36,10 +37,13 @@ class SongListViewModel(
     private val pageSize = 100
     init {
         viewModelScope.launch {
-            limitFlow.debounce(timeoutMillis = 1000L).collectLatest {
-                when(val result = getSongListUsecase.invoke(it)) {
+            limitFlow.debounce(timeoutMillis = 1000L).collectLatest { limit ->
+                when(val result = getSongListUsecase.invoke(limit)) {
                     is Result.Success -> originalListFlow.update { result.response }
-                    is Result.Error -> { println("${result.error}") }//TODO Toast
+                    is Result.Error ->
+                        when(val error = result.error) {
+                            is SearchSongsError.Unknown -> _uiState.update { it.copy(toastMessage = error.errorMessage) }
+                        }
                 }
             }
         }
@@ -72,6 +76,12 @@ class SongListViewModel(
             viewModelScope.launch {
                 limitFlow.update { it + pageSize }
             }
+        }
+    }
+
+    fun onToasted() {
+        _uiState.update {
+            it.copy(toastMessage = null)
         }
     }
 }
