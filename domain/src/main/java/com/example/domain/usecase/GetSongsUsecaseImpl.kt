@@ -5,7 +5,6 @@ import com.example.domain.model.Result.Error
 import com.example.data.repository.IItunesMusicListRepository
 import com.example.domain.model.SearchSongsError
 import com.example.domain.model.Song
-import java.net.URL
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository): IGetSongsUsecase {
@@ -26,6 +25,7 @@ internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository)
         )
     } catch (e: Exception) {
         when(e) {
+            //catching CancellationException will block coroutine cancellation
             is CancellationException -> throw e
             else -> Error(SearchSongsError.Unknown(e.localizedMessage ?: ""))
         }

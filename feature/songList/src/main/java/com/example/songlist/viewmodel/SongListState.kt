@@ -9,7 +9,8 @@ import kotlinx.collections.immutable.persistentListOf
 data class SongListState (
     val searchKeyword: String =  "",
     val songList: ImmutableList<Song> = persistentListOf(),
-    val sortingColumn: SongSortingColumn = SongSortingColumn.NONE
+    val isLastPage: Boolean = false,
+    val sortingColumn: SongSortingColumn = SongSortingColumn.SONG_NAME
 )
 
 sealed interface SongListEvent {

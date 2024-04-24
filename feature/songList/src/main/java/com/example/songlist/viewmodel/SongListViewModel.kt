@@ -9,16 +9,17 @@ import com.example.domain.usecase.IFilterSongsUsecase
 import com.example.domain.usecase.IGetSongsUsecase
 import com.example.domain.usecase.ISortSongsUsecase
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class SongListViewModel(
     private val getSongListUsecase: IGetSongsUsecase,
     private val filterSongsUsecase: IFilterSongsUsecase,
@@ -31,9 +32,11 @@ class SongListViewModel(
     private val _uiState = MutableStateFlow(SongListState())
     val uiState: StateFlow<SongListState> = _uiState
 
+    private val maxSize = 200
+    private val pageSize = 100
     init {
         viewModelScope.launch {
-            limitFlow.collectLatest {
+            limitFlow.debounce(timeoutMillis = 1000L).collectLatest {
                 when(val result = getSongListUsecase.invoke(it)) {
                     is Result.Success -> originalListFlow.update { result.response }
                     is Result.Error -> { println("${result.error}") }//TODO Toast
@@ -46,25 +49,29 @@ class SongListViewModel(
                 val filteredList = filterSongsUsecase.invoke(origin, state.searchKeyword)
                 val sortedList = sortSongsUsecase.invoke(filteredList, state.sortingColumn)
                 _uiState.update {
-                    it.copy(songList = sortedList.toImmutableList())
+                    it.copy(songList = sortedList.toImmutableList(), isLastPage = origin.size == maxSize)
                 }
             }.collect()
         }
     }
 
-    fun OnSelectSorting(sortingColumn: SongSortingColumn) {
+    fun onSelectSorting(sortingColumn: SongSortingColumn) {
         _uiState.update {
             it.copy(sortingColumn = sortingColumn)
         }
     }
 
-    fun OnSearch(keyword: String) {
+    fun onSearch(keyword: String) {
         _uiState.update {
             it.copy(searchKeyword = keyword)
         }
     }
 
-    fun OnLoadMore() {
-        limitFlow.update { 200 }
+    fun onLoadMore() {
+        if(!_uiState.value.isLastPage) {
+            viewModelScope.launch {
+                limitFlow.update { it + pageSize }
+            }
+        }
     }
 }

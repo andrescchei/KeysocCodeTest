@@ -1,31 +1,27 @@
 package com.example.songlist.ui
 
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -50,9 +47,9 @@ fun SongListPage() {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     SearchBarWithSongList(uiState = uiState.value) { event ->
         when(event) {
-            SongListEvent.OnLoadMore -> viewModel.OnLoadMore()
-            is SongListEvent.OnSearch -> viewModel.OnSearch(event.searchText)
-            is SongListEvent.OnSelectSorting -> viewModel.OnSelectSorting(event.sortingColumn)
+            SongListEvent.OnLoadMore -> viewModel.onLoadMore()
+            is SongListEvent.OnSearch -> viewModel.onSearch(event.searchText)
+            is SongListEvent.OnSelectSorting -> viewModel.onSelectSorting(event.sortingColumn)
         }
     }
 }
@@ -82,29 +79,17 @@ fun SearchBarWithSongList(uiState: SongListState, onEvent: (SongListEvent) -> Un
                 val isSortbyAlbum = uiState.sortingColumn == SongSortingColumn.ALBUM_NAME
                 TextButton(
                     onClick = {
-                        val selectColumn =
-                            if(isSortbySong) {
-                                SongSortingColumn.NONE
-                            } else {
-                                SongSortingColumn.SONG_NAME
-                            }
-                        onEvent(SongListEvent.OnSelectSorting(selectColumn))
+                        onEvent(SongListEvent.OnSelectSorting(SongSortingColumn.SONG_NAME))
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = if(isSortbySong) Color.Blue else Color.LightGray
                     )
                 ) {
-                    Text(text = "Song", color = Color.LightGray)
+                    Text(text = "Song")
                 }
                 TextButton(
                     onClick = {
-                        val selectColumn =
-                            if(isSortbyAlbum) {
-                                SongSortingColumn.NONE
-                            } else {
-                                SongSortingColumn.ALBUM_NAME
-                            }
-                        onEvent(SongListEvent.OnSelectSorting(selectColumn))
+                        onEvent(SongListEvent.OnSelectSorting(SongSortingColumn.ALBUM_NAME))
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = if(isSortbyAlbum) Color.Blue else Color.LightGray
@@ -115,25 +100,37 @@ fun SearchBarWithSongList(uiState: SongListState, onEvent: (SongListEvent) -> Un
             }
         }
     ) {
-        SongList(songs = uiState.songList)
+        SongList(songs = uiState.songList, isLastPage = uiState.isLastPage, onEvent = onEvent)
     }
 }
 
 @Composable
-fun SongList(songs: ImmutableList<Song>) {
+fun SongList(songs: ImmutableList<Song>, isLastPage: Boolean, onEvent: (SongListEvent) -> Unit) {
     if(songs.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxHeight()
                 .imePadding()
         ) {
-            itemsIndexed(
-                items = songs,
-                key = { _, item ->
-                item.id
-            }) {index, item ->
-                //TODO: loading more indicator after last item
+            items(songs) { item ->
                 SongItem(item)
+            }
+            if(!isLastPage) {
+                item {
+                    Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .height(40.dp),
+                        )
+                    }
+                    LaunchedEffect(Unit) {
+                        onEvent(SongListEvent.OnLoadMore)
+                    }
+                }
             }
         }
     }
@@ -160,9 +157,11 @@ fun SongItem(song: Song) {
         Column(modifier = Modifier
             .fillMaxWidth()
         ) {
-            Text(song.id)
-            Text(song.songName)
-            Text(song.albumName)
+            Text(song.songName,
+                modifier = Modifier.fillMaxHeight(),
+                fontSize = 18.sp)
+            Text(song.albumName,
+                fontSize = 12.sp)
         }
     }
     Divider(thickness = 1.dp, color = Color.Black)
