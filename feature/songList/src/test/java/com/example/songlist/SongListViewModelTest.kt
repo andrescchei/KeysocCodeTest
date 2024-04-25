@@ -35,8 +35,7 @@ import org.junit.Rule
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SongListViewModelTest {
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+
 
     @MockK
     private lateinit var getSongsUsecase: IGetSongsUsecase
@@ -48,6 +47,9 @@ class SongListViewModelTest {
     private lateinit var coroutineDispatcher: CoroutineDispatcher
 
     private val testDispatcher = UnconfinedTestDispatcher()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule(testDispatcher)
 
     private lateinit var viewModel: SongListViewModel
 
@@ -104,7 +106,7 @@ class SongListViewModelTest {
         unmockkAll()
     }
     private suspend fun TurbineTestContext<SongListState>.consumeInitialEmit() {
-        // consume initial full list item emitted
+        // consume initial empty item emitted
         assertEquals(persistentListOf<Song>(), awaitItem().songList)
     }
     @Test

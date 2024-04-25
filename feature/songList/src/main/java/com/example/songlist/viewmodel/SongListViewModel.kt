@@ -62,7 +62,7 @@ class SongListViewModel(
         combine(limitFlow, sortingFlow, searchFlow) { state, sort, search ->
             val filtered = filterSongsUsecase.invoke(state.songList, search).toImmutableList()
             val sorted = sortSongsUsecase.invoke(filtered, sort).toImmutableList()
-            val newState =_uiState.value.copy(
+            val newState = _uiState.value.copy(
                 songList = sorted.toImmutableList(),
                 isLastPage = state.songList.size == maxSize
             )
