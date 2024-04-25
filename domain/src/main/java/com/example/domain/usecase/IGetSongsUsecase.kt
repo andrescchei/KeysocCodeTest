@@ -5,5 +5,5 @@ import com.example.domain.model.SearchSongsError
 import com.example.domain.model.Song
 
 interface IGetSongsUsecase {
-    suspend fun invoke(limit: Int): Result<List<Song>, SearchSongsError>
+    suspend operator fun invoke(limit: Int): Result<List<Song>, SearchSongsError>
 }

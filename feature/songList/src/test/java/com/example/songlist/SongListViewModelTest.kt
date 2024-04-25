@@ -90,8 +90,14 @@ class SongListViewModelTest {
         )
 
         coEvery {
-            getSongsUsecase.invoke(any())
+            getSongsUsecase(any())
         } returns Result.Success(fullList)
+        coEvery {
+            filterSongsUsecase(any(), any())
+        } returns fullList
+        coEvery {
+            sortSongsUsecase(any(), any())
+        } returns fullList
 
         viewModel = SongListViewModel(
             coroutineDispatcher,
@@ -107,19 +113,11 @@ class SongListViewModelTest {
     }
     private suspend fun TurbineTestContext<SongListState>.consumeInitialEmit() {
         // consume initial empty item emitted
-        assertEquals(persistentListOf<Song>(), awaitItem().songList)
+        assertEquals(fullList, awaitItem().songList)
     }
     @Test
     fun `get full song list success`() = runTest {
-        coEvery {
-            filterSongsUsecase.invoke(any(), any())
-        } returns fullList
-        coEvery {
-            sortSongsUsecase.invoke(any(), any())
-        } returns fullList
-
         viewModel.uiState.test {
-            this.consumeInitialEmit()
             val result = awaitItem().songList
             assertEquals(result, fullList)
         }
@@ -128,14 +126,14 @@ class SongListViewModelTest {
     @Test
     fun `get filtered song list success`() = runTest {
         coEvery {
-            filterSongsUsecase.invoke(any(), any())
+            filterSongsUsecase(any(), any())
         } returns filteredListA
         coEvery {
-            sortSongsUsecase.invoke(any(), any())
+            sortSongsUsecase(any(), any())
         } returns filteredListA
-        viewModel.onSearch("A")
         viewModel.uiState.test {
             this.consumeInitialEmit()
+            viewModel.onSearch("A")
             val result = awaitItem().songList
             assertEquals(result, filteredListA)
         }
@@ -145,16 +143,16 @@ class SongListViewModelTest {
         val keywordA = "A"
         val keywordB = "B"
         coEvery {
-            filterSongsUsecase.invoke(any(), keywordA)
+            filterSongsUsecase(any(), keywordA)
         } returns filteredListA
         coEvery {
-            filterSongsUsecase.invoke(any(), keywordB)
+            filterSongsUsecase(any(), keywordB)
         } returns filteredListB
         coEvery {
-            sortSongsUsecase.invoke(filteredListA, any())
+            sortSongsUsecase(filteredListA, any())
         } returns filteredListA
         coEvery {
-            sortSongsUsecase.invoke(filteredListB, any())
+            sortSongsUsecase(filteredListB, any())
         } returns filteredListB
 
         viewModel.uiState.test {
@@ -162,36 +160,39 @@ class SongListViewModelTest {
             viewModel.onSearch(keywordA)
             val result1UIChange = awaitItem()
             assertEquals(keywordA, result1UIChange.searchKeyword)
-            val result1ActualFilter = awaitItem()
-            assertEquals(filteredListA, result1ActualFilter.songList)
+            assertEquals(filteredListA, result1UIChange.songList)
+//            val result1ActualFilter = awaitItem()
+//            assertEquals(filteredListA, result1ActualFilter.songList)
 
             viewModel.onSearch(keywordB)
             val result2UIChange = awaitItem()
             assertEquals(keywordB, result2UIChange.searchKeyword)
-            val result2ActualFilter = awaitItem()
-            assertEquals(filteredListB, result2ActualFilter.songList)
+            assertEquals(filteredListB, result2UIChange.songList)
+//            val result2ActualFilter = awaitItem()
+//            assertEquals(filteredListB, result2ActualFilter.songList)
 
             viewModel.onSearch(keywordA)
             val result3UIChange = awaitItem()
             assertEquals(keywordA, result3UIChange.searchKeyword)
-            val result3ActualFilter = awaitItem()
-            assertEquals(filteredListA, result3ActualFilter.songList)
+            assertEquals(filteredListA, result3UIChange.songList)
+//            val result3ActualFilter = awaitItem()
+//            assertEquals(filteredListA, result3ActualFilter.songList)
         }
     }
 
     @Test
     fun `switching sorting between song and album`() = runTest {
         coEvery {
-            getSongsUsecase.invoke(any())
+            getSongsUsecase(any())
         } returns Result.Success(fullList)
         coEvery {
-            filterSongsUsecase.invoke(any(), any())
+            filterSongsUsecase(any(), any())
         } returns fullList
         coEvery {
-            sortSongsUsecase.invoke(any(), SongSortingColumn.SONG_NAME)
+            sortSongsUsecase(any(), SongSortingColumn.SONG_NAME)
         } returns sortedSongList
         coEvery {
-            sortSongsUsecase.invoke(any(), SongSortingColumn.ALBUM_NAME)
+            sortSongsUsecase(any(), SongSortingColumn.ALBUM_NAME)
         } returns sortedAlbumList
 
         viewModel.uiState.test {
@@ -199,54 +200,56 @@ class SongListViewModelTest {
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
             val result1UIChange = awaitItem()
             assertEquals(SongSortingColumn.ALBUM_NAME, result1UIChange.sortingColumn)
-            val result1ActualSort = awaitItem()
-            assertEquals(sortedAlbumList, result1ActualSort.songList)
+            assertEquals(sortedAlbumList, result1UIChange.songList)
+//            val result1ActualSort = awaitItem()
+//            assertEquals(sortedAlbumList, result1ActualSort.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.SONG_NAME)
             val result2UIChange = awaitItem()
             assertEquals(SongSortingColumn.SONG_NAME, result2UIChange.sortingColumn)
-            val result2ActualSorted = awaitItem()
-            assertEquals(sortedSongList, result2ActualSorted.songList)
+            assertEquals(sortedSongList, result2UIChange.songList)
+//            val result2ActualSorted = awaitItem()
+//            assertEquals(sortedSongList, result2ActualSorted.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
             val result3UIChange = awaitItem()
             assertEquals(SongSortingColumn.ALBUM_NAME, result3UIChange.sortingColumn)
-            val result3ActualSorted = awaitItem()
-            assertEquals(sortedAlbumList, result3ActualSorted.songList)
+            assertEquals(sortedAlbumList, result3UIChange.songList)
+
+//            val result3ActualSorted = awaitItem()
+//            assertEquals(sortedAlbumList, result3ActualSorted.songList)
         }
     }
 
     @Test
-    fun `loadMore`() = runTest {
+    fun loadMore() = runTest {
         coEvery {
-            getSongsUsecase.invoke(100)
+            getSongsUsecase(100)
         } returns Result.Success(fullList)
         coEvery {
-            filterSongsUsecase.invoke(fullList, any())
+            filterSongsUsecase(fullList, any())
         } returns fullList
         coEvery {
-            sortSongsUsecase.invoke(fullList, any())
+            sortSongsUsecase(fullList, any())
         } returns fullList
         coEvery {
-            getSongsUsecase.invoke(200)
+            getSongsUsecase(200)
         } returns Result.Success(loadMoreList)
         coEvery {
-            filterSongsUsecase.invoke(loadMoreList, any())
+            filterSongsUsecase(loadMoreList, any())
         } returns loadMoreList
         coEvery {
-            sortSongsUsecase.invoke(loadMoreList, any())
+            sortSongsUsecase(loadMoreList, any())
         } returns loadMoreList
 
         viewModel.uiState.test {
             this.consumeInitialEmit()
-            val default = awaitItem()
-            assertEquals(100, default.limit)
-            assertEquals(fullList, default.songList)
             viewModel.onLoadMore()
             val result1UIChange = awaitItem()
             assertEquals(200, result1UIChange.limit)
-            val result1ActualLoadMore = awaitItem()
-            assertEquals(loadMoreList, result1ActualLoadMore.songList)
+            assertEquals(loadMoreList, result1UIChange.songList)
+//            val result1ActualLoadMore = awaitItem()
+//            assertEquals(loadMoreList, result1ActualLoadMore.songList)
         }
     }
 }

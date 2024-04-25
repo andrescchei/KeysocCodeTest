@@ -4,5 +4,5 @@ import com.example.domain.model.Song
 import com.example.domain.model.SongSortingColumn
 
 interface ISortSongsUsecase {
-    suspend fun invoke(list: List<Song>, sorting: SongSortingColumn): List<Song>
+    suspend operator fun invoke(list: List<Song>, sorting: SongSortingColumn): List<Song>
 }

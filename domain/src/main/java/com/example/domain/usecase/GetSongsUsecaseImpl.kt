@@ -8,7 +8,7 @@ import com.example.domain.model.Song
 import kotlin.coroutines.cancellation.CancellationException
 
 internal class GetSongsUsecaseImpl(private val repo: IItunesMusicListRepository): IGetSongsUsecase {
-    override suspend fun invoke(
+    override suspend operator fun invoke(
         limit: Int
     ): Result<List<Song>, SearchSongsError> = try {
         val response = repo.getItunesMusicList(limit)
