@@ -15,15 +15,16 @@ fun SongListPage() {
     val toastMessage = uiState.value.toastMessage
     if(toastMessage != null) {
         Toast.makeText(LocalContext.current, toastMessage, Toast.LENGTH_SHORT).show()
-        viewModel.onToasted()
+        viewModel.onEvent(SongListEvent.OnToasted)
     }
     SearchBarWithSongList(uiState = uiState.value) { event ->
-        when(event) {
-            SongListEvent.OnLoadMore -> viewModel.onLoadMore()
-            is SongListEvent.OnSearch -> viewModel.onSearch(event.searchText)
-            is SongListEvent.OnSelectSorting -> viewModel.onSelectSorting(event.sortingColumn)
-            is SongListEvent.OnToasted -> viewModel.onToasted()
-        }
+        viewModel.onEvent(event)
+//        when(event) {
+//            SongListEvent.OnLoadMore -> viewModel.onLoadMore()
+//            is SongListEvent.OnSearch -> viewModel.onSearch(event.searchText)
+//            is SongListEvent.OnSelectSorting -> viewModel.onSelectSorting(event.sortingColumn)
+//            is SongListEvent.OnToasted -> viewModel.onToasted()
+//        }
     }
 }
 

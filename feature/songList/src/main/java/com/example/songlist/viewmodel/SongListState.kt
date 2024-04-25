@@ -12,7 +12,7 @@ data class SongListState (
     val isLastPage: Boolean = false,
     val sortingColumn: SongSortingColumn = SongSortingColumn.SONG_NAME,
     val toastMessage: String? = null,
-    val limit: Int = 100
+    val limit: Int = 0
 )
 
 sealed interface SongListEvent {
@@ -24,6 +24,7 @@ sealed interface SongListEvent {
         val sortingColumn: SongSortingColumn
     ): SongListEvent
 
+    data object OnStart: SongListEvent
     data object OnLoadMore: SongListEvent
 
     data object OnToasted: SongListEvent

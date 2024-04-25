@@ -1,4 +1,4 @@
 package com.example.domain.model
-sealed interface SearchSongsError: Error {
-    data class Unknown(val errorMessage: String): SearchSongsError
+sealed interface GetSongsError: Error {
+    data class Unknown(val errorMessage: String): GetSongsError
 }
