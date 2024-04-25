@@ -13,7 +13,7 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SongList(songs: ImmutableList<Song>, isLastPage: Boolean, onEvent: (SongListEvent) -> Unit) {
-    println("Song list recompose")
+    println("Song list recompose $songs")
     if(songs.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier

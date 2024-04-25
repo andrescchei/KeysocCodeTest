@@ -1,6 +1,7 @@
 package com.example.keysoccodetest
 
 import android.app.Application
+import com.example.common.coroutineModule
 import com.example.data.di.dataSourceModule
 import com.example.data.di.networkModule
 import com.example.data.di.repositoryModule
@@ -15,6 +16,7 @@ class MainApplication: Application() {
         startKoin {
             androidContext(this@MainApplication)
             modules(
+                coroutineModule,
                 networkModule,
                 dataSourceModule,
                 repositoryModule,
