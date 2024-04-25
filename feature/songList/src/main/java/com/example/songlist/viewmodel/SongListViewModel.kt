@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
@@ -69,7 +70,7 @@ class SongListViewModel(
                 newState
             }
             newState
-        }
+        }.flowOn(coroutineDispatcher.io)
 
     val uiState: StateFlow<SongListState> = merge(_uiState, mainFlow).distinctUntilChanged().stateIn(viewModelScope, SharingStarted.Lazily, SongListState())
 
