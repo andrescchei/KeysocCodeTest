@@ -4,7 +4,6 @@ import app.cash.turbine.TurbineTestContext
 import app.cash.turbine.test
 import com.example.common.CoroutineDispatcher
 import com.example.domain.model.Result
-import com.example.domain.model.Song
 import com.example.domain.model.SongSortingColumn
 import com.example.domain.usecase.IFilterSongsUsecase
 import com.example.domain.usecase.IGetSongsUsecase
@@ -15,7 +14,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
 import io.mockk.unmockkAll
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -134,8 +132,10 @@ class SongListViewModelTest {
         viewModel.uiState.test {
             this.consumeInitialEmit()
             viewModel.onSearch("A")
-            val result = awaitItem().songList
-            assertEquals(result, filteredListA)
+            val resultKeywordChanged = awaitItem().searchKeyword
+            assertEquals("A", resultKeywordChanged)
+            val resultListChanged = awaitItem().songList
+            assertEquals(filteredListA, resultListChanged)
         }
     }
     @Test
@@ -158,25 +158,22 @@ class SongListViewModelTest {
         viewModel.uiState.test {
             this.consumeInitialEmit()
             viewModel.onSearch(keywordA)
-            val result1UIChange = awaitItem()
-            assertEquals(keywordA, result1UIChange.searchKeyword)
-            assertEquals(filteredListA, result1UIChange.songList)
-//            val result1ActualFilter = awaitItem()
-//            assertEquals(filteredListA, result1ActualFilter.songList)
+            val resultKeywordChanged = awaitItem().searchKeyword
+            assertEquals(keywordA, resultKeywordChanged)
+            val resultListChanged = awaitItem().songList
+            assertEquals(filteredListA, resultListChanged)
 
             viewModel.onSearch(keywordB)
-            val result2UIChange = awaitItem()
-            assertEquals(keywordB, result2UIChange.searchKeyword)
-            assertEquals(filteredListB, result2UIChange.songList)
-//            val result2ActualFilter = awaitItem()
-//            assertEquals(filteredListB, result2ActualFilter.songList)
+            val resultKeywordChanged2 = awaitItem().searchKeyword
+            assertEquals(keywordB, resultKeywordChanged2)
+            val resultListChanged2 = awaitItem().songList
+            assertEquals(filteredListB, resultListChanged2)
 
             viewModel.onSearch(keywordA)
-            val result3UIChange = awaitItem()
-            assertEquals(keywordA, result3UIChange.searchKeyword)
-            assertEquals(filteredListA, result3UIChange.songList)
-//            val result3ActualFilter = awaitItem()
-//            assertEquals(filteredListA, result3ActualFilter.songList)
+            val resultKeywordChanged3 = awaitItem().searchKeyword
+            assertEquals(keywordA, resultKeywordChanged3)
+            val resultListChanged3 = awaitItem().songList
+            assertEquals(filteredListA, resultListChanged3)
         }
     }
 
@@ -198,26 +195,22 @@ class SongListViewModelTest {
         viewModel.uiState.test {
             this.consumeInitialEmit()
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
-            val result1UIChange = awaitItem()
-            assertEquals(SongSortingColumn.ALBUM_NAME, result1UIChange.sortingColumn)
-            assertEquals(sortedAlbumList, result1UIChange.songList)
-//            val result1ActualSort = awaitItem()
-//            assertEquals(sortedAlbumList, result1ActualSort.songList)
+            val resultSortChanged = awaitItem()
+            assertEquals(SongSortingColumn.ALBUM_NAME, resultSortChanged.sortingColumn)
+            val resultSortListChanged = awaitItem()
+            assertEquals(sortedAlbumList, resultSortListChanged.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.SONG_NAME)
-            val result2UIChange = awaitItem()
-            assertEquals(SongSortingColumn.SONG_NAME, result2UIChange.sortingColumn)
-            assertEquals(sortedSongList, result2UIChange.songList)
-//            val result2ActualSorted = awaitItem()
-//            assertEquals(sortedSongList, result2ActualSorted.songList)
+            val resultSortChanged2 = awaitItem()
+            assertEquals(SongSortingColumn.SONG_NAME, resultSortChanged2.sortingColumn)
+            val resultSortListChanged2 = awaitItem()
+            assertEquals(sortedSongList, resultSortListChanged2.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
-            val result3UIChange = awaitItem()
-            assertEquals(SongSortingColumn.ALBUM_NAME, result3UIChange.sortingColumn)
-            assertEquals(sortedAlbumList, result3UIChange.songList)
-
-//            val result3ActualSorted = awaitItem()
-//            assertEquals(sortedAlbumList, result3ActualSorted.songList)
+            val resultSortChanged3 = awaitItem()
+            assertEquals(SongSortingColumn.ALBUM_NAME, resultSortChanged3.sortingColumn)
+            val resultSortListChanged3 = awaitItem()
+            assertEquals(sortedAlbumList, resultSortListChanged3.songList)
         }
     }
 
@@ -245,11 +238,10 @@ class SongListViewModelTest {
         viewModel.uiState.test {
             this.consumeInitialEmit()
             viewModel.onLoadMore()
-            val result1UIChange = awaitItem()
-            assertEquals(200, result1UIChange.limit)
-            assertEquals(loadMoreList, result1UIChange.songList)
-//            val result1ActualLoadMore = awaitItem()
-//            assertEquals(loadMoreList, result1ActualLoadMore.songList)
+            val resultLimitChanged = awaitItem()
+            assertEquals(200, resultLimitChanged.limit)
+            val resultListChanged = awaitItem()
+            assertEquals(loadMoreList, resultListChanged.songList)
         }
     }
 }
