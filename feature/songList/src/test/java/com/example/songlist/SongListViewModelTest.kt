@@ -137,7 +137,6 @@ class SongListViewModelTest {
             viewModel.onSearch("A")
             val resultKeywordChanged = awaitItem()
             assertEquals("A", resultKeywordChanged.searchKeyword)
-//            val resultListChanged = awaitItem().songList
             assertEquals(filteredListA, resultKeywordChanged.songList)
         }
     }
@@ -163,19 +162,16 @@ class SongListViewModelTest {
             viewModel.onSearch(keywordA)
             val resultKeywordChanged = awaitItem()
             assertEquals(keywordA, resultKeywordChanged.searchKeyword)
-//            val resultListChanged = awaitItem()
             assertEquals(filteredListA, resultKeywordChanged.songList)
 
             viewModel.onSearch(keywordB)
             val resultKeywordChanged2 = awaitItem()
             assertEquals(keywordB, resultKeywordChanged2.searchKeyword)
-//            val resultListChanged2 = awaitItem()
             assertEquals(filteredListB, resultKeywordChanged2.songList)
 
             viewModel.onSearch(keywordA)
             val resultKeywordChanged3 = awaitItem()
             assertEquals(keywordA, resultKeywordChanged3.searchKeyword)
-//            val resultListChanged3 = awaitItem()
             assertEquals(filteredListA, resultKeywordChanged3.songList)
         }
     }
@@ -200,19 +196,16 @@ class SongListViewModelTest {
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
             val resultSortChanged = awaitItem()
             assertEquals(SongSortingColumn.ALBUM_NAME, resultSortChanged.sortingColumn)
-//            val resultSortListChanged = awaitItem()
             assertEquals(sortedAlbumList, resultSortChanged.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.SONG_NAME)
             val resultSortChanged2 = awaitItem()
             assertEquals(SongSortingColumn.SONG_NAME, resultSortChanged2.sortingColumn)
-//            val resultSortListChanged2 = awaitItem()
             assertEquals(sortedSongList, resultSortChanged2.songList)
 
             viewModel.onSelectSorting(SongSortingColumn.ALBUM_NAME)
             val resultSortChanged3 = awaitItem()
             assertEquals(SongSortingColumn.ALBUM_NAME, resultSortChanged3.sortingColumn)
-//            val resultSortListChanged3 = awaitItem()
             assertEquals(sortedAlbumList, resultSortChanged3.songList)
         }
     }
